@@ -1,0 +1,57 @@
+body,
+html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+#letter {
+  height: 100vmin;
+  width: 100vmin;
+  inset: 0;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-size: 100vmin;
+  line-height: 1;
+  font-weight: bold;
+}
+
+.random_letter {
+  color: #303030;
+}
+
+.final_letter {
+  color: #000000;
+}
+
+#letter_picker {
+  height: 25vmin;
+  width: 100vmin;
+  inset: 0;
+  display: grid;
+  grid-template-columns: 25vmin 25vmin 25vmin 25vmin;
+}
+
+#letter_picker>a {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2vmin;
+  font-size: 20vmin;
+  line-height: 1;
+  font-weight: bold;
+  color: white;
+  background-color: navy;
+  text-decoration: none;
+}

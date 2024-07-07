@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Life is a four-letter word</title>
+  </head>
+
+  <body>
+    <div id="letter"></div>
+    <script>
+      // Config:
+      const lead_interval = 3_000;
+      const letter_interval = 400;
+      const display_interval = 5_000;
+      const words = ["ABLE", "ALEX", "ALSO", "AREA", "ATOM", "BABY", "BACK", "BALL", "BAND", "BANK", "BASE", "BEAR", "BEAT", "BEEN", "BELL", "BEST", "BIRD", "BLOW", "BLUE", "BOAT", "BODY", "BONE", "BOOK", "BORN", "BOTH", "BURN", "BUSY", "BUTT", "CALL", "CAME", "CAMP", "CARD", "CARE", "CASE", "CEES", "CELL", "CENT", "CITY", "COAT", "COCK", "COLD", "COME", "COOK", "COOL", "COPY", "CORN", "COST", "CRAP", "CROP", "CUNT", "DAMN", "DARK", "DEAD", "DEAL", "DEAR", "DEEP", "DICK", "DOES", "DONE", "DOOR", "DOWN", "DRAW", "DROP", "DUCK", "EACH", "EASE", "EAST", "EDGE", "ELSE", "EVEN", "EVER", "FACE", "FACT", "FAIR", "FALL", "FARM", "FAST", "FEAR", "FEED", "FEEL", "FEET", "FELL", "FELT", "FILL", "FIND", "FINE", "FIRE", "FISH", "FIVE", "FLAT", "FLOW", "FOOD", "FOOT", "FORM", "FOUR", "FREE", "FROM", "FUCK", "FULL", "GAME", "GAVE", "GIRL", "GIVE", "GLAD", "GOLD", "GONE", "GOOD", "GRAY", "GREW", "GROW", "HAIR", "HALF", "HAND", "HARD", "HAVE", "HEAD", "HEAR", "HEAT", "HELD", "HELL", "HELP", "HERE", "HIGH", "HILL", "HOLD", "HOLE", "HOME", "HOPE", "HOUR", "HUGE", "HUNT", "IDEA", "INCH", "IRON", "JOIN", "JUMP", "JUST", "KEEP", "KEPT", "KILL", "KIND", "KING", "KNEW", "KNOW", "LADY", "LAKE", "LAND", "LAST", "LATE", "LEAD", "LEFT", "LESS", "LIFE", "LIFT", "LIKE", "LINE", "LIST", "LIVE", "LONE", "LONG", "LOOK", "LOST", "LOUD", "LOVE", "MADE", "MAIN", "MAKE", "MANY", "MARK", "MASS", "MEAN", "MEAT", "MEET", "MILE", "MILK", "MIND", "MINE", "MISS", "MOON", "MORE", "MOST", "MOVE", "MUCH", "MUST", "NAME", "NEAR", "NECK", "NEED", "NEXT", "NINE", "NOON", "NOSE", "NOTE", "NOUN", "ONCE", "ONLY", "OPEN", "OVER", "PAGE", "PAIR", "PART", "PASS", "PAST", "PATH", "PICK", "PISS", "PLAN", "PLAY", "POEM", "POOR", "PORT", "POSE", "POST", "PULL", "PUSH", "RACE", "RAIL", "RAIN", "READ", "REAL", "REST", "RICH", "RIDE", "RING", "RISE", "ROAD", "ROCK", "ROLL", "ROOM", "ROOT", "ROPE", "ROSE", "RULE", "SAFE", "SAID", "SAIL", "SALT", "SAME", "SAND", "SAVE", "SEAT", "SEED", "SEEM", "SELF", "SELL", "SEND", "SENT", "SHAG", "SHIP", "SHIT", "SHOE", "SHOP", "SHOW", "SIDE", "SIGN", "SING", "SIZE", "SKIN", "SLIP", "SLOW", "SLUT", "SNOW", "SOFT", "SOIL", "SOME", "SONG", "SOON", "SPOT", "STAR", "STAY", "STEP", "STOP", "SUCH", "SUIT", "SURE", "SWIM", "TAIL", "TAKE", "TALK", "TALL", "TEAM", "TELL", "TERM", "TEST", "THAN", "THAT", "THEM", "THEN", "THEY", "THIN", "THIS", "THUS", "TIME", "TINY", "TIRE", "TITS", "TOLD", "TONE", "TOOK", "TOOL", "TOWN", "TREE", "TRIP", "TUBE", "TURD", "TURN", "TWAT", "TYPE", "UNIT", "VARY", "VERB", "VERY", "VIEW", "WAIT", "WALK", "WALL", "WANK", "WANT", "WARM", "WASH", "WAVE", "WEAR", "WEEK", "WELL", "WENT", "WERE", "WEST", "WHAT", "WHEN", "WIDE", "WIFE", "WILD", "WILL", "WIND", "WING", "WIRE", "WISH", "WITH", "WOOD", "WORD", "WORK", "YARD", "YEAR", "YOUR"]
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+      // Window config:
+      const urlParams = new URLSearchParams(window.location.search);
+      const letter_position = parseInt(urlParams.get('p'));  // zero-based
+
+      // Constants:
+      const word_count = words.length;
+      const word_interval = lead_interval + 3 * letter_interval + display_interval;
+      const letter_div = document.getElementById("letter");
+      const letter_show_time = lead_interval + (letter_position) * letter_interval;
+
+      function pseudoRandomItem(seed, max) {
+        // Simple hash:
+        function hash(x) {
+            x = ((x >> 16) ^ x) * 0x45d9f3b;
+            x = ((x >> 16) ^ x) * 0x45d9f3b;
+            x = (x >> 16) ^ x;
+            return x;
+        }
+
+        // Pick number between 0 and max:
+        const randomFraction = (hash(seed) % 100000) / 100000;
+        return Math.floor(randomFraction * max);
+      }
+
+      // Update letter:
+      function animate() {
+        now = Date.now();
+        epoch = Math.trunc(now / word_interval) * word_interval;
+        time_since_epoch = now - epoch;
+        if (time_since_epoch <= letter_show_time) {
+          letter_value = letters.charAt(Math.random() * letters.length);
+          letter_div.innerText = letter_value;  // Random letter
+          if (is_final_letter) {
+            letter_div.classList = ["random_letter",];
+            is_final_letter = false;  // Update state
+          }
+        }
+        else if (!is_final_letter) {
+          // Determine letter:
+          word_position = pseudoRandomItem(epoch, words.length);  // Pseudo-random word from list
+          letter_value = words[word_position].charAt(letter_position - 1);  // Pick letter for position
+          // Write letter:
+          letter_div.innerText = letter_value;
+          letter_div.classList = ["final_letter",];
+          is_final_letter = true;  // Update state
+        }
+      }
+
+      // Animate:
+      is_final_letter = null;
+      setInterval(animate, 50);
+    </script>
+  </body>
+</html>
